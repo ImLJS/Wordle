@@ -1,6 +1,6 @@
-# React Wordle Game
+# Wordle
 
-Welcome to the React Wordle game! Wordle is a simple word game where you have to guess a hidden word within a limited number of attempts.
+Welcome to the Wordle game! Wordle is a simple word game where you have to guess a hidden word within a limited number of attempts.
 
 ## How to Play
 
@@ -21,11 +21,7 @@ Welcome to the React Wordle game! Wordle is a simple word game where you have to
 2. Open the terminal/command prompt.
 3. Navigate to the cloned directory.
 4. Install dependencies using `npm install`.
-5. Start the development server using `npm start`.
-
-## Contributing
-
-Contributions are welcome! If you have any ideas for improvements or find any bugs, please open an issue or submit a pull request.
+5. Start the development server using `npm run dev`.
 
 ## Credits
 
