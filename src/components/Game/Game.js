@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React from 'react';
 
-import { sample, range } from "../../utils";
-import { WORDS } from "../../data";
-import { NUM_OF_GUESSES_ALLOWED } from "../../constants";
-import { checkGuess } from "../../game-helpers";
+import { sample } from '../../utils';
+import { WORDS } from '../../data';
+import { NUM_OF_GUESSES_ALLOWED } from '../../constants';
+
+import GuessInput from '../GuessInput';
+import GuessResults from '../GuessResults';
+import WonBanner from '../WonBanner';
+import LostBanner from '../LostBanner';
 
 // Pick a random word on every pageload.
 const answer = sample(WORDS);
@@ -11,62 +15,33 @@ const answer = sample(WORDS);
 console.info({ answer });
 
 function Game() {
-  const [guessList, setGuessList] = useState([]);
+  // running | won | lost
+  const [gameStatus, setGameStatus] = React.useState('running');
 
-  return (
-    <>
-      <GuessOutput guessList={guessList} />
-      <Guess setGuessList={setGuessList} />
-    </>
-  );
-}
+  const [guesses, setGuesses] = React.useState([]);
 
-function GuessOutput({ guessList }) {
-  return (
-    <div className="guess-results">
-      {range(NUM_OF_GUESSES_ALLOWED).map((num) => (
-        <GuessCell key={num} value={guessList[num]} />
-      ))}
-    </div>
-  );
-}
+  function handleSubmitGuess(tentativeGuess) {
+    const nextGuesses = [...guesses, tentativeGuess];
+    setGuesses(nextGuesses);
 
-function GuessCell({ value }) {
-  const result = checkGuess(value, answer);
-
-  return (
-    <p className="guess">
-      {range(5).map((num) => (
-        <span className={`cell ${result ? result[num].status : ""}`} key={num}>
-          {value ? value[num] : undefined}
-        </span>
-      ))}
-    </p>
-  );
-}
-
-function Guess({ setGuessList }) {
-  const [guess, setGuess] = useState("");
-  function handleSubmit(e) {
-    e.preventDefault();
-    setGuessList((items) => [...items, guess]);
-    setGuess("");
+    if (tentativeGuess.toUpperCase() === answer) {
+      setGameStatus('won');
+    } else if (nextGuesses.length >= NUM_OF_GUESSES_ALLOWED) {
+      setGameStatus('lost');
+    }
   }
 
   return (
     <>
-      <form className="guess-input-wrapper" onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="guess-input">Enter guess:</label>
-        <input
-          required
-          minLength={5}
-          maxLength={5}
-          id="guess-input"
-          type="text"
-          value={guess}
-          onChange={(e) => setGuess(e.target.value.toUpperCase())}
-        />
-      </form>
+      <GuessResults guesses={guesses} answer={answer} />
+      <GuessInput
+        gameStatus={gameStatus}
+        handleSubmitGuess={handleSubmitGuess}
+      />
+      {gameStatus === 'won' && (
+        <WonBanner numOfGuesses={guesses.length} />
+      )}
+      {gameStatus === 'lost' && <LostBanner answer={answer} />}
     </>
   );
 }
